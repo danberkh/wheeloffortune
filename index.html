@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sorteo ZK — Rueda de Fortuna</title>
+  <meta name="description" content="Rueda de sorteo ZKTeco.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <!-- Fullscreen canvas for particle confetti -->
+  <canvas id="confettiCanvas" aria-hidden="true"></canvas>
+
+  <!-- Screen reader live announcement region -->
+  <div id="srAnnounce" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+
+  <!-- Ambient background glow elements -->
+  <div class="ambient-glow glow-top-right" aria-hidden="true"></div>
+  <div class="ambient-glow glow-bottom-left" aria-hidden="true"></div>
+
+  <!-- Main Floating Dashboard Container -->
+  <div class="dashboard-shell">
+
+    <!-- LEFT STAGE: Sunset-to-Purple Gradient Card (Wheel & Metrics) -->
+    <section class="stage-card" aria-label="Wheel Stage">
+
+      <!-- Metric Header (Matches $17,220.10 style) -->
+      <div class="metric-header">
+        <div class="metric-caption">Participantes del Sorteo</div>
+        <div class="metric-value-row">
+          <div class="metric-value">
+            <span id="participantHeroCount">8</span>
+            <span class="metric-unit">Inscriptos</span>
+          </div>
+          <div id="metricBadge" class="metric-badge">+100% Justo</div>
+        </div>
+      </div>
+
+      <!-- Wheel Stage Area -->
+      <div class="wheel-area">
+        <div class="wheel-wrapper">
+          <!-- Sleek Top Pointer with Neon Glow -->
+          <div class="wheel-pointer" aria-hidden="true">
+            <svg viewBox="0 0 32 38" width="32" height="38" fill="none">
+              <path d="M16 36 L4 10 Q3 4 9 4 L23 4 Q29 4 28 10 Z" fill="#111010" />
+              <circle cx="16" cy="13" r="3.5" fill="#c8e63c" />
+            </svg>
+          </div>
+
+          <!-- Wheel Canvas -->
+          <canvas id="wheelCanvas" aria-label="Prize wheel canvas" role="img"></canvas>
+
+          <!-- Interactive Center Hub Button -->
+          <button id="centerSpinBtn" class="center-hub-btn" type="button" aria-label="Girar la rueda">
+            <span class="hub-label">GIRAR</span>
+          </button>
+        </div>
+
+        <!-- Spin Action & Status Indicator -->
+        <div class="spin-controls">
+          <p id="spinStatus" class="spin-status-msg" aria-live="polite">Toca GIRAR en el centro o presiona Espacio</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- RIGHT PANEL: Obsidian Fintech Sidebar (Controls & Participants) -->
+    <aside class="sidebar-card" aria-label="Participantes e Historial de Ganadores">
+
+      <!-- Pill Segmented Tabs (Matches Crypto / NFT / DeFi tabs) -->
+      <div class="pill-tabs" role="tablist">
+        <button id="tabParticipants" class="pill-tab-btn active" role="tab" aria-selected="true"
+          aria-controls="panelParticipants">
+          Participantes
+        </button>
+        <button id="tabHistory" class="pill-tab-btn" role="tab" aria-selected="false" aria-controls="panelHistory">
+          Historial (<span id="historyCount">0</span>)
+        </button>
+      </div>
+
+      <!-- Tab Content 1: Participants Management -->
+      <div id="panelParticipants" class="tab-panel active" role="tabpanel" aria-labelledby="tabParticipants">
+        <!-- Quick Add Form (Pill search style with + button) -->
+        <form id="addNameForm" class="quick-add-form" onsubmit="return false;">
+          <div class="input-pill-wrapper">
+            <span class="input-search-icon" aria-hidden="true">✏️</span>
+            <input type="text" id="nameInput" class="pill-input" placeholder="Nombre del participante..."
+              autocomplete="off" maxlength="60">
+          </div>
+          <button id="addBtn" class="pill-circle-add-btn" type="submit" aria-label="Agregar nombre">
+            <span aria-hidden="true">+</span>
+          </button>
+        </form>
+
+        <!-- Bulk Textarea Input Card -->
+        <div class="textarea-card">
+          <div class="textarea-card-header">
+            <label for="namesTextarea">Lista (uno por línea):</label>
+            <span id="sliceInfo" class="slice-pill-badge">8 sectores</span>
+          </div>
+          <textarea id="namesTextarea" class="fintech-textarea" rows="8"
+            placeholder="Escribe un nombre por línea...&#10;Ana García&#10;Carlos López&#10;Sofía Rodríguez&#10;Lucas Fernández"
+            spellcheck="false"></textarea>
+        </div>
+
+        <!-- Panel Action Buttons -->
+        <div class="sidebar-actions">
+          <button id="shuffleBtn" class="btn btn-glass" type="button">
+            <span aria-hidden="true">🔀</span> Mezclar Lista
+          </button>
+          <button id="clearBtn" class="btn btn-glass-danger" type="button">
+            <span aria-hidden="true">🗑️</span> Borrar Todo
+          </button>
+        </div>
+      </div>
+
+      <!-- Tab Content 2: Past Winners History -->
+      <div id="panelHistory" class="tab-panel" role="tabpanel" aria-labelledby="tabHistory" hidden>
+        <div class="history-card-header">
+          <div class="history-title-group">
+            <span class="history-title">Historial de Puestos</span>
+            <span class="history-pill-tag">En Vivo</span>
+          </div>
+          <button id="clearHistoryBtn" class="btn-text-ghost" type="button">Limpiar</button>
+        </div>
+
+        <div id="historyListContainer" class="history-container">
+          <ul id="historyList" class="crypto-history-list"></ul>
+          <p id="emptyHistoryMsg" class="empty-history-box">Aún no hay ganadores registrados. ¡Gira la rueda para
+            definir el 1° Puesto!</p>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <!-- Winner Modal Dialog (Fintech Glass Style) -->
+  <div id="winnerModalBackdrop" class="modal-backdrop" hidden>
+    <div id="winnerModal" class="fintech-modal-card" role="dialog" aria-modal="true" aria-labelledby="modalTitle"
+      aria-describedby="winnerDisplay">
+      <div class="modal-decor-glow" aria-hidden="true"></div>
+
+      <div class="modal-top">
+        <div id="winnerTrophy" class="trophy-badge" aria-hidden="true">🏆</div>
+        <h2 id="modalTitle">¡1° PUESTO!</h2>
+        <p class="modal-sub">¡Felicitaciones!</p>
+      </div>
+
+      <div class="winner-hero-box">
+        <span id="winnerPretitle" class="winner-pretitle">Primer Lugar 🥇</span>
+        <div id="winnerDisplay" class="winner-highlight-name">Nombre Ganador</div>
+      </div>
+
+      <div class="modal-btn-stack">
+        <button id="removeWinnerBtn" class="btn btn-lime-action" type="button">
+          Quitar de la rueda
+        </button>
+        <button id="keepWinnerBtn" class="btn btn-glass-action" type="button">
+          Mantener en la rueda
+        </button>
+      </div>
+
+      <button id="closeModalBtn" class="modal-x-close" type="button" aria-label="Cerrar modal">✕</button>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+
+</html>
