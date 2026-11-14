@@ -369,52 +369,9 @@ body {
   display: flex;
   flex-direction: column;
   gap: 0.85rem;
-  flex: 1;
 }
 
 .tab-panel[hidden] { display: none; }
-
-/* Mascot / Reaction Sticker Box */
-.mascot-container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-top: auto;
-  padding: 0.75rem 0 0.25rem 0;
-  user-select: none;
-}
-
-.mascot-img {
-  width: auto;
-  max-width: 200px;
-  max-height: 220px;
-  object-fit: contain;
-  filter: drop-shadow(0 10px 20px rgba(17, 16, 16, 0.12));
-  animation: mascotBreath 3.2s ease-in-out infinite alternate;
-  pointer-events: none;
-}
-
-@keyframes mascotBreath {
-  0% {
-    transform: translateY(0) scale(1);
-  }
-  100% {
-    transform: translateY(-8px) scale(1.02);
-  }
-}
-
-.wheel-spinning .mascot-img {
-  animation: mascotExcited 0.35s ease-in-out infinite alternate !important;
-}
-
-@keyframes mascotExcited {
-  0% {
-    transform: translateY(0) rotate(-2deg) scale(1.02);
-  }
-  100% {
-    transform: translateY(-6px) rotate(2deg) scale(1.05);
-  }
-}
 
 /* ---------- QUICK ADD FORM ---------- */
 .quick-add-form {

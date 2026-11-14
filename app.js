@@ -578,7 +578,6 @@
     }
 
     state.isSpinning = true;
-    document.body.classList.add('wheel-spinning');
     updateUI();
 
     // 1. FAIRNESS: Pick winner using crypto rejection sampling BEFORE animation starts
@@ -617,7 +616,6 @@
       } else {
         state.currentAngle = finalAngle % TWO_PI;
         state.isSpinning = false;
-        document.body.classList.remove('wheel-spinning');
         drawWheel();
         onSpinComplete(winnerName, winnerIndex);
       }
