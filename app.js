@@ -330,7 +330,22 @@
   function initData() {
     const savedNames = loadStorage(STORAGE_KEY_NAMES, null);
     state.names = Array.isArray(savedNames) && savedNames.length > 0 ? savedNames : [...DEFAULT_NAMES];
-    state.history = loadStorage(STORAGE_KEY_HISTORY, []);
+    const savedHistory = loadStorage(STORAGE_KEY_HISTORY, []);
+    state.history = Array.isArray(savedHistory) ? savedHistory : [];
+
+    // Ensure all history entries have a valid puesto
+    const total = state.history.length;
+    state.history = state.history.map((item, index) => {
+      if (typeof item.puesto !== 'number') {
+        return { ...item, puesto: total - index };
+      }
+      return item;
+    });
+
+    // Sort so 1° Puesto is at the top, followed by 2°, 3°, 4°, etc.
+    state.history.sort((a, b) => a.puesto - b.puesto);
+    saveStorage(STORAGE_KEY_HISTORY, state.history);
+
     namesTextarea.value = state.names.join('\n');
     renderHistory();
   }
@@ -623,7 +638,8 @@
       puesto: puestoNumber,
       time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })
     };
-    state.history.unshift(entry);
+    state.history.push(entry);
+    state.history.sort((a, b) => (a.puesto || 0) - (b.puesto || 0));
     saveStorage(STORAGE_KEY_HISTORY, state.history);
     renderHistory();
 
@@ -734,12 +750,15 @@
     }
 
     emptyHistoryMsg.hidden = true;
-    state.history.forEach((item, index) => {
+
+    // Display in order from 1° Puesto downwards (1, 2, 3, 4...)
+    const sorted = [...state.history].sort((a, b) => (a.puesto || 0) - (b.puesto || 0));
+
+    sorted.forEach((item) => {
       const li = document.createElement('li');
       li.className = 'history-item';
 
-      // Fallback: If item.puesto doesn't exist, calculate it (count - index)
-      const puestoNumber = item.puesto || (count - index);
+      const puestoNumber = item.puesto || 1;
       const puestoInfo = getPuestoInfo(puestoNumber);
 
       const puestoClass = puestoNumber <= 3 ? `puesto-${puestoNumber}` : '';
