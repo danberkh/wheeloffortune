@@ -429,15 +429,15 @@
         const arcAtRim = radius * sliceAngle;
         const fontSize = Math.max(9, Math.min(15, Math.floor(arcAtRim * 0.42)));
         ctx.font = `700 ${fontSize}px "Space Grotesk", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif`;
-        ctx.fillStyle = getAutoContrastColor(sliceColor);
+        ctx.fillStyle = '#ffffff';
         ctx.textAlign = 'right';
         ctx.textBaseline = 'middle';
 
         const maxTextWidth = radius * 0.62;
         const textLabel = truncateText(ctx, state.names[i], maxTextWidth);
 
-        ctx.shadowColor = 'rgba(0, 0, 0, 0.35)';
-        ctx.shadowBlur = 3;
+        ctx.shadowColor = 'rgba(0, 0, 0, 0.6)';
+        ctx.shadowBlur = 4;
         ctx.fillText(textLabel, radius - 16, 0);
 
         ctx.restore();
