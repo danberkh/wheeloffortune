@@ -90,6 +90,9 @@
   const closeModalBtn = document.getElementById('closeModalBtn');
   const srAnnounce = document.getElementById('srAnnounce');
 
+  const fullscreenBtn = document.getElementById('fullscreenBtn');
+  const fsIcon = document.getElementById('fsIcon');
+
   // ==========================================================================
   // PURE HELPER FUNCTIONS (Math, Crypto, Color, Rankings)
   // ==========================================================================
@@ -427,7 +430,7 @@
         ctx.rotate(midAngle);
 
         const arcAtRim = radius * sliceAngle;
-        const fontSize = Math.max(9, Math.min(15, Math.floor(arcAtRim * 0.42)));
+        const fontSize = Math.max(10, Math.min(24, Math.floor(arcAtRim * 0.40)));
         ctx.font = `700 ${fontSize}px "Space Grotesk", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif`;
         ctx.fillStyle = '#ffffff';
         ctx.textAlign = 'right';
@@ -438,7 +441,7 @@
 
         ctx.shadowColor = 'rgba(0, 0, 0, 0.6)';
         ctx.shadowBlur = 4;
-        ctx.fillText(textLabel, radius - 16, 0);
+        ctx.fillText(textLabel, radius - Math.max(16, Math.floor(fontSize * 0.85)), 0);
 
         ctx.restore();
       }
@@ -886,12 +889,46 @@
       panelParticipants.hidden = true;
     });
 
+    // Fullscreen Toggle
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      } else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen().catch(() => {});
+        }
+      }
+    }
+
+    function onFullscreenChange() {
+      if (fsIcon) {
+        fsIcon.textContent = document.fullscreenElement ? '✕' : '⛶';
+      }
+      resizeCanvases();
+      setTimeout(resizeCanvases, 100);
+      setTimeout(resizeCanvases, 300);
+    }
+
+    if (fullscreenBtn) {
+      fullscreenBtn.addEventListener('click', toggleFullscreen);
+    }
+    document.addEventListener('fullscreenchange', onFullscreenChange);
+
     // Responsive Resize (ResizeObserver + window fallback)
     if (window.ResizeObserver) {
-      const ro = new ResizeObserver(() => resizeCanvases());
+      const ro = new ResizeObserver(() => {
+        resizeCanvases();
+      });
       ro.observe(wheelCanvas.parentElement);
+      if (document.querySelector('.dashboard-shell')) {
+        ro.observe(document.querySelector('.dashboard-shell'));
+      }
     }
-    window.addEventListener('resize', resizeCanvases);
+
+    window.addEventListener('resize', () => {
+      resizeCanvases();
+      setTimeout(resizeCanvases, 80);
+    });
   }
 
   // --- Bootstrapping ---

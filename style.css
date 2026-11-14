@@ -68,10 +68,11 @@ body {
   background-color: var(--bg);
   color: var(--ink);
   min-height: 100vh;
+  min-height: 100dvh;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 2rem 1.25rem;
+  padding: clamp(0.6rem, 1.8vh, 1.75rem) clamp(0.75rem, 2vw, 2rem);
   overflow-x: hidden;
 }
 
@@ -106,7 +107,8 @@ body {
   position: relative;
   z-index: 10;
   width: 100%;
-  max-width: 1100px;
+  max-width: clamp(1000px, 92vw, 1540px);
+  height: clamp(580px, 92vh, 940px);
   background: var(--bg);
   border-radius: var(--radius-xl);
   border: var(--border-strong);
@@ -120,8 +122,8 @@ body {
 
 @media (min-width: 900px) {
   .dashboard-shell {
-    grid-template-columns: 1.35fr 1fr;
-    min-height: 700px;
+    grid-template-columns: 1.45fr 1fr;
+    height: clamp(580px, 92vh, 940px);
   }
 }
 
@@ -131,10 +133,10 @@ body {
 .stage-card {
   position: relative;
   background: var(--cream);
-  padding: 2rem 2.25rem;
+  padding: clamp(1.25rem, 2.2vh, 2.25rem) clamp(1.25rem, 2.5vw, 2.5rem);
   display: flex;
   flex-direction: column;
-  gap: 0;
+  justify-content: space-between;
   border-right: var(--border);
   overflow: hidden;
 }
@@ -171,16 +173,16 @@ body {
 .metric-header {
   position: relative;
   z-index: 2;
-  margin-bottom: 1.5rem;
+  margin-bottom: clamp(0.75rem, 1.8vh, 1.5rem);
 }
 
 .metric-caption {
-  font-size: 0.72rem;
+  font-size: clamp(0.7rem, 1vh, 0.8rem);
   font-weight: 600;
   color: var(--ink-3);
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  margin-bottom: 0.4rem;
+  margin-bottom: 0.35rem;
 }
 
 .metric-value-row {
@@ -192,7 +194,7 @@ body {
 
 .metric-value {
   font-family: var(--font-display);
-  font-size: 3rem;
+  font-size: clamp(2.4rem, 4vw, 3.8rem);
   font-weight: 700;
   line-height: 1;
   letter-spacing: -0.045em;
@@ -203,7 +205,7 @@ body {
 }
 
 .metric-unit {
-  font-size: 1rem;
+  font-size: clamp(0.95rem, 1.2vw, 1.2rem);
   font-weight: 500;
   color: var(--ink-2);
   letter-spacing: normal;
@@ -220,6 +222,29 @@ body {
   letter-spacing: 0.01em;
 }
 
+/* Fullscreen toggle pill button */
+.fullscreen-toggle-btn {
+  margin-left: auto;
+  width: 34px;
+  height: 34px;
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  border: var(--border-strong);
+  color: var(--ink);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 0.95rem;
+  transition: background var(--t-fast), transform var(--t-fast);
+}
+
+.fullscreen-toggle-btn:hover {
+  background: var(--ink);
+  color: var(--lime);
+  transform: scale(1.08);
+}
+
 /* ---------- WHEEL AREA ---------- */
 .wheel-area {
   position: relative;
@@ -229,18 +254,19 @@ body {
   align-items: center;
   justify-content: center;
   flex: 1;
-  padding: 0.25rem 0 0 0;
+  min-height: 0;
+  padding: 0.25rem 0;
 }
 
 .wheel-wrapper {
   position: relative;
   width: 100%;
-  max-width: 400px;
+  max-width: min(580px, 58vh);
   aspect-ratio: 1 / 1;
   border-radius: 50%;
   user-select: none;
   touch-action: manipulation;
-  filter: drop-shadow(0 12px 32px rgba(17,16,16,0.18));
+  filter: drop-shadow(0 16px 40px rgba(17,16,16,0.18));
 }
 
 #wheelCanvas {
@@ -252,19 +278,27 @@ body {
 
 .wheel-pointer {
   position: absolute;
-  top: -16px;
+  top: clamp(-22px, -4%, -15px);
   left: 50%;
   transform: translateX(-50%);
   z-index: 20;
   pointer-events: none;
+  width: clamp(32px, 7%, 46px);
+  height: auto;
+}
+
+.wheel-pointer svg {
+  width: 100%;
+  height: auto;
+  display: block;
 }
 
 .center-hub-btn {
   position: absolute;
   top: 50%; left: 50%;
   transform: translate(-50%, -50%);
-  width: 76px;
-  height: 76px;
+  width: clamp(74px, 16%, 96px);
+  height: clamp(74px, 16%, 96px);
   border-radius: 50%;
   background: var(--ink);
   border: 4px solid var(--cream);
@@ -294,7 +328,7 @@ body {
 
 .hub-label {
   font-family: var(--font-display);
-  font-size: 0.78rem;
+  font-size: clamp(0.74rem, 1.8vw, 0.9rem);
   font-weight: 800;
   letter-spacing: 0.12em;
   color: var(--lime);
@@ -302,22 +336,22 @@ body {
 
 /* ---------- SPIN CONTROLS ---------- */
 .spin-controls {
-  margin-top: 1.25rem;
+  margin-top: clamp(0.75rem, 1.5vh, 1.35rem);
   width: 100%;
-  max-width: 380px;
+  max-width: 440px;
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
 .spin-status-msg {
-  font-size: 0.82rem;
+  font-size: clamp(0.8rem, 1vh, 0.95rem);
   color: var(--ink-2);
   min-height: 1.3em;
   text-align: center;
   font-weight: 600;
   background: rgba(17, 16, 16, 0.05);
-  padding: 0.4rem 1rem;
+  padding: clamp(0.35rem, 0.8vh, 0.55rem) clamp(0.8rem, 1.5vw, 1.3rem);
   border-radius: var(--radius-pill);
 }
 
@@ -326,10 +360,12 @@ body {
    ========================================================================== */
 .sidebar-card {
   background: var(--bg);
-  padding: 2rem 1.75rem;
+  padding: clamp(1.25rem, 2.2vh, 2rem) clamp(1rem, 2vw, 1.75rem);
   display: flex;
   flex-direction: column;
-  gap: 1.1rem;
+  gap: clamp(0.75rem, 1.5vh, 1.25rem);
+  min-height: 0;
+  overflow: hidden;
 }
 
 /* ---------- PILL TABS ---------- */
@@ -368,7 +404,10 @@ body {
 .tab-panel {
   display: flex;
   flex-direction: column;
-  gap: 0.85rem;
+  gap: clamp(0.6rem, 1.2vh, 0.95rem);
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
 }
 
 .tab-panel[hidden] { display: none; }
@@ -446,10 +485,12 @@ body {
   background: var(--surface);
   border: var(--border);
   border-radius: var(--radius-md);
-  padding: 0.9rem 1rem;
+  padding: clamp(0.75rem, 1.5vh, 1rem);
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  flex: 1;
+  min-height: 0;
 }
 
 .textarea-card-header {
@@ -479,9 +520,9 @@ body {
   font-size: 0.875rem;
   line-height: 1.55;
   color: var(--ink);
-  resize: vertical;
-  min-height: 130px;
-  max-height: 260px;
+  resize: none;
+  flex: 1;
+  min-height: 120px;
 }
 
 .fintech-textarea::placeholder { color: var(--ink-3); }
@@ -580,8 +621,9 @@ body {
 .btn-text-ghost:hover { color: var(--coral); }
 
 .history-container {
-  min-height: 150px;
-  max-height: 300px;
+  flex: 1;
+  min-height: 140px;
+  max-height: none;
   overflow-y: auto;
   padding-right: 0.2rem;
 }
@@ -923,18 +965,90 @@ body {
 }
 
 /* ==========================================================================
-   RESPONSIVE — MOBILE
+   RESPONSIVE — MOBILE & SMALL VIEWPORTS
    ========================================================================== */
-@media (max-width: 899px) {
+@media (max-width: 899px), (max-height: 620px) {
+  body {
+    height: auto;
+    min-height: 100vh;
+    padding: 1rem 0.75rem;
+    align-items: flex-start;
+  }
+
+  .dashboard-shell {
+    height: auto;
+    min-height: auto;
+    grid-template-columns: 1fr;
+    max-width: 620px;
+    border-radius: var(--radius-lg);
+  }
+
   .stage-card {
     border-right: none;
     border-bottom: var(--border);
     padding: 1.5rem 1.25rem;
   }
 
-  .sidebar-card { padding: 1.5rem 1.25rem; }
+  .sidebar-card {
+    padding: 1.5rem 1.25rem;
+    overflow: visible;
+  }
 
   .metric-value { font-size: 2.2rem; }
 
-  .wheel-wrapper { max-width: 300px; }
+  .wheel-wrapper { max-width: 320px; }
+
+  .history-container {
+    max-height: 280px;
+  }
+
+  .fintech-textarea {
+    min-height: 140px;
+    max-height: 220px;
+    resize: vertical;
+  }
+}
+
+/* ==========================================================================
+   FULLSCREEN & LARGE VIEWPORTS (F11 / Native Desktop)
+   ========================================================================== */
+@media (min-width: 1200px) and (min-height: 800px) {
+  .dashboard-shell {
+    max-width: min(1560px, 94vw);
+    height: min(94vh, 980px);
+  }
+
+  .wheel-wrapper {
+    max-width: min(620px, 62vh);
+  }
+
+  .metric-value {
+    font-size: 3.4rem;
+  }
+}
+
+@media (min-width: 1600px) and (min-height: 950px) {
+  .dashboard-shell {
+    max-width: min(1720px, 95vw);
+    height: min(94vh, 1100px);
+  }
+
+  .wheel-wrapper {
+    max-width: min(700px, 64vh);
+  }
+
+  .metric-value {
+    font-size: 3.8rem;
+  }
+}
+
+:fullscreen body,
+:-webkit-full-screen body {
+  padding: 1vh 1.5vw;
+}
+
+:fullscreen .dashboard-shell,
+:-webkit-full-screen .dashboard-shell {
+  max-width: 97vw;
+  height: 96vh;
 }
