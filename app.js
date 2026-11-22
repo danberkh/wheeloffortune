@@ -86,20 +86,20 @@
     'Pablo Huller'
   ];
 
-  // ZKTeco High-Tech Dark Mode Palette for Wheel Sectors
-  const ZK_DARK_PALETTE = [
-    '#181e28', // Obsidian Slate
-    '#223a2d', // ZK Tech Emerald
-    '#2c333e', // Cyber Carbon
-    '#1c2d38', // Deep Cyan Steel
-    '#263e32', // Deep Forest Tech
-    '#363838', // Charcoal Graphite (#363838)
-    '#192733', // Midnight Blue-Gray
-    '#2a3a31', // Dark Cyber Jade
-    '#222a33', // Deep Steel
-    '#1f3d2f', // ZK Neon Emerald Tone
-    '#303841', // Dark Slate
-    '#1a332a', // Cyber Pine
+  // Vibrant multi-color palette for the prize wheel
+  const WHEEL_PALETTE = [
+    '#e8573a', // Coral
+    '#c8e63c', // Electric Lime
+    '#8ec5d4', // Sky Blue
+    '#7fa88a', // Sage Green
+    '#f0a132', // Amber
+    '#d4c5a9', // Warm Sand
+    '#b5d4c1', // Mint Sage
+    '#f0d080', // Soft Yellow
+    '#c4a882', // Tan
+    '#a8c4d4', // Steel Blue
+    '#d4a8a0', // Dusty Rose
+    '#b8d4a0', // Light Green
   ];
 
   // --- State Object ---
@@ -305,10 +305,14 @@
   }
 
   /**
-   * Get slice color from curated dark-tech ZKTeco palette.
+   * Get slice color from curated palette or full wide multi-color spectrum.
    */
   function getSliceColor(index, total) {
-    return ZK_DARK_PALETTE[index % ZK_DARK_PALETTE.length];
+    if (total <= WHEEL_PALETTE.length) {
+      return WHEEL_PALETTE[index % WHEEL_PALETTE.length];
+    }
+    const hue = Math.round((index * 360) / total);
+    return `hsl(${hue}, 78%, 56%)`;
   }
 
   /**
