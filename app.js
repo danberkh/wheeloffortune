@@ -7,7 +7,7 @@
   'use strict';
 
   // --- Storage Keys ---
-  const STORAGE_KEY_NAMES = 'sorteo_zk_participants';
+  const STORAGE_KEY_NAMES = 'sorteo_zk_participants_v2';
   const STORAGE_KEY_HISTORY = 'sorteo_zk_history';
   const STORAGE_KEY_THEME = 'sorteo_zk_theme';
 
@@ -16,14 +16,74 @@
   const TWO_PI = 2 * Math.PI;
 
   const DEFAULT_NAMES = [
-    'Ana García',
-    'Carlos López',
-    'Sofía Rodríguez',
-    'Lucas Fernández',
-    'Valentina Morales',
-    'Mateo Gómez',
-    'Camila Torres',
-    'Esteban Ruiz'
+    'Marcelo Sosa',
+    'Fernando Oscar Labarque',
+    'Gabriel Britos',
+    'Christian Silva',
+    'Diego Gustavo Montane',
+    'Edgardo Roig',
+    'Gonzalo Ezequiel Cáceres',
+    'Gustavo Acevedo',
+    'Pablo Bernad',
+    'Martin Contreras',
+    'Martin Alejandro Dangelo',
+    'Santino Nicola D\'Angelo',
+    'Alfredo Gomez Pildain',
+    'Hernan Palma del Rey',
+    'Mariano Catarino',
+    'Francisco Catarino',
+    'Luana Sileoni',
+    'Matias Ezequiel Titolo',
+    'Patricio Faustino',
+    'Mariano Forlenza',
+    'Marcelo Trenner',
+    'Miguel Ledesma',
+    'Daniel Kiwowicz',
+    'Romina Lucero',
+    'Alejandro Ledesma',
+    'Fiamma Ragone',
+    'Claudio Rivero',
+    'Andres Beraldo',
+    'Gaston Castillo',
+    'Gonzalo Mauro',
+    'Esteban Muller',
+    'Agustin Gambino',
+    'Martin Gambino',
+    'Marcelo Gonzalez',
+    'Sebastian Scecconi',
+    'Diego Rodriguez',
+    'Jose M. Sittner',
+    'Mariano De Giacomo',
+    'Adrian Barrile',
+    'Jose Arando',
+    'Emilce Bustillos',
+    'Alejandro Guillermo Munnich',
+    'Flavio Marchini',
+    'Marcelo Repetto',
+    'Juan Miguierini',
+    'Felipe Bogliolo',
+    'Eduardo Bogliolo',
+    'Diego Montane',
+    'Guillermo Montane',
+    'Federico Andrada Zamarbide',
+    'Augusto Makar',
+    'Enzo Martoccia',
+    'Rocco Martoccia',
+    'Germán Castillo',
+    'Horacio Mengia',
+    'Geraldine D´Elia',
+    'Laura Alvarez',
+    'Cristian Bois',
+    'Fernando Briseño',
+    'Ignacio Iglesias',
+    'Juan Sebastian Iglesias',
+    'Hernan Guastaferri',
+    'Lucas Abdala',
+    'Joel Rodriguez',
+    'Jonatan Gutierrez',
+    'Franco Fajardo',
+    'Esteban Reina',
+    'Pablo Huller'
   ];
 
   // Minimalist palette matching the new design system
