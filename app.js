@@ -110,6 +110,8 @@
     isSpinning: false,
     lastWinner: null,
     lastWinnerIndex: -1,
+    currentWinnerEntryId: null,
+    currentPuestoNumber: 1,
     animFrameId: null,
     dpr: Math.min(window.devicePixelRatio || 1, 2)
   };
@@ -147,6 +149,7 @@
   const winnerDisplay = document.getElementById('winnerDisplay');
   const removeWinnerBtn = document.getElementById('removeWinnerBtn');
   const keepWinnerBtn = document.getElementById('keepWinnerBtn');
+  const respinWinnerBtn = document.getElementById('respinWinnerBtn');
   const closeModalBtn = document.getElementById('closeModalBtn');
   const srAnnounce = document.getElementById('srAnnounce');
 
@@ -693,10 +696,13 @@
     // Determine position (Puesto): 1st draw = 1, 2nd draw = 2, 3rd draw = 3, etc.
     const puestoNumber = state.history.length + 1;
     const puestoInfo = getPuestoInfo(puestoNumber);
+    state.currentPuestoNumber = puestoNumber;
 
     // Record in history
+    const entryId = Date.now() + '-' + getSecureRandomInt(10000);
+    state.currentWinnerEntryId = entryId;
     const entry = {
-      id: Date.now() + '-' + getSecureRandomInt(10000),
+      id: entryId,
       name: winnerName,
       puesto: puestoNumber,
       time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })
@@ -723,6 +729,11 @@
     if (modalTitle) modalTitle.textContent = puestoInfo.modalTitle;
     if (winnerPretitle) winnerPretitle.textContent = puestoInfo.modalPretitle;
     if (winnerTrophy) winnerTrophy.textContent = puestoInfo.trophy;
+
+    if (respinWinnerBtn) {
+      respinWinnerBtn.title = `Eliminar a ${winnerName} por ausencia y volver a girar la rueda para definir el ${puestoInfo.badge}`;
+    }
+
     winnerModalBackdrop.hidden = false;
     createConfetti();
 
@@ -737,18 +748,78 @@
   }
 
   function removeCurrentWinner() {
-    if (state.lastWinnerIndex >= 0 && state.lastWinnerIndex < state.names.length) {
+    const winnerToRemove = state.lastWinner;
+    if (state.lastWinnerIndex >= 0 && state.lastWinnerIndex < state.names.length && state.names[state.lastWinnerIndex] === winnerToRemove) {
       state.names.splice(state.lastWinnerIndex, 1);
-      namesTextarea.value = state.names.join('\n');
-      saveStorage(STORAGE_KEY_NAMES, state.names);
-      drawWheel();
-      updateUI();
+    } else if (winnerToRemove) {
+      const idx = state.names.indexOf(winnerToRemove);
+      if (idx !== -1) {
+        state.names.splice(idx, 1);
+      }
     }
+    namesTextarea.value = state.names.join('\n');
+    saveStorage(STORAGE_KEY_NAMES, state.names);
+    drawWheel();
+    updateUI();
     hideWinnerModal();
   }
 
   function keepCurrentWinner() {
     hideWinnerModal();
+  }
+
+  /**
+   * Re-spin for the same position (Puesto) if the drawn participant was absent/missing.
+   * Removes the absent participant from the wheel, deletes their provisional win from history,
+   * closes the modal, and automatically spins again for the exact same position.
+   */
+  function respinCurrentPuesto() {
+    if (state.isSpinning) return;
+    if (state.names.length < 2) {
+      alert('Se necesitan al menos 2 participantes en la rueda para volver a tirar.');
+      return;
+    }
+
+    const puestoInfo = getPuestoInfo(state.currentPuestoNumber);
+    const absentName = state.lastWinner;
+
+    // 1. Remove the absent participant from the wheel so they aren't drawn again
+    if (state.lastWinnerIndex >= 0 && state.lastWinnerIndex < state.names.length && state.names[state.lastWinnerIndex] === absentName) {
+      state.names.splice(state.lastWinnerIndex, 1);
+    } else if (absentName) {
+      const idx = state.names.indexOf(absentName);
+      if (idx !== -1) {
+        state.names.splice(idx, 1);
+      }
+    }
+
+    namesTextarea.value = state.names.join('\n');
+    saveStorage(STORAGE_KEY_NAMES, state.names);
+
+    // 2. Remove this pending entry from history so the exact same puesto will be drawn next
+    if (state.currentWinnerEntryId) {
+      state.history = state.history.filter(item => item.id !== state.currentWinnerEntryId);
+    } else if (state.history.length > 0) {
+      state.history.pop();
+    }
+    saveStorage(STORAGE_KEY_HISTORY, state.history);
+    renderHistory();
+
+    // 3. Close the modal
+    hideWinnerModal();
+
+    // 4. Update metrics and redraw the wheel
+    drawWheel();
+    updateUI();
+
+    // 5. Update status text
+    spinStatus.textContent = `Ausente (${absentName}). Girando nuevamente para definir el ${puestoInfo.badge}...`;
+    srAnnounce.textContent = `${absentName} ausente. Se vuelve a tirar para el ${puestoInfo.badge}.`;
+
+    // 6. Smoothly auto-spin again after modal fadeout
+    setTimeout(() => {
+      spinWheel();
+    }, 350);
   }
 
   // ==========================================================================
@@ -925,6 +996,9 @@
     // Modal Actions
     removeWinnerBtn.addEventListener('click', removeCurrentWinner);
     keepWinnerBtn.addEventListener('click', keepCurrentWinner);
+    if (respinWinnerBtn) {
+      respinWinnerBtn.addEventListener('click', respinCurrentPuesto);
+    }
     closeModalBtn.addEventListener('click', hideWinnerModal);
     winnerModalBackdrop.addEventListener('click', (e) => {
       if (e.target === winnerModalBackdrop) hideWinnerModal();
