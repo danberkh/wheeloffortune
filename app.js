@@ -86,20 +86,20 @@
     'Pablo Huller'
   ];
 
-  // Minimalist palette matching the new design system
-  const FINTECH_PALETTE = [
-    '#e8573a', // Coral
-    '#c8e63c', // Electric Lime
-    '#8ec5d4', // Sky Blue
-    '#7fa88a', // Sage Green
-    '#f0a132', // Amber
-    '#d4c5a9', // Warm Sand
-    '#b5d4c1', // Mint Sage
-    '#f0d080', // Soft Yellow
-    '#c4a882', // Tan
-    '#a8c4d4', // Steel Blue
-    '#d4a8a0', // Dusty Rose
-    '#b8d4a0', // Light Green
+  // ZKTeco High-Tech Dark Mode Palette for Wheel Sectors
+  const ZK_DARK_PALETTE = [
+    '#181e28', // Obsidian Slate
+    '#223a2d', // ZK Tech Emerald
+    '#2c333e', // Cyber Carbon
+    '#1c2d38', // Deep Cyan Steel
+    '#263e32', // Deep Forest Tech
+    '#363838', // Charcoal Graphite (#363838)
+    '#192733', // Midnight Blue-Gray
+    '#2a3a31', // Dark Cyber Jade
+    '#222a33', // Deep Steel
+    '#1f3d2f', // ZK Neon Emerald Tone
+    '#303841', // Dark Slate
+    '#1a332a', // Cyber Pine
   ];
 
   // --- State Object ---
@@ -305,14 +305,10 @@
   }
 
   /**
-   * Get slice color from curated fintech palette or scaled HSL.
+   * Get slice color from curated dark-tech ZKTeco palette.
    */
   function getSliceColor(index, total) {
-    if (total <= FINTECH_PALETTE.length) {
-      return FINTECH_PALETTE[index % FINTECH_PALETTE.length];
-    }
-    const hue = Math.round((index * 360) / total);
-    return `hsl(${hue}, 78%, 56%)`;
+    return ZK_DARK_PALETTE[index % ZK_DARK_PALETTE.length];
   }
 
   /**
@@ -481,9 +477,9 @@
       ctx.fillStyle = sliceColor;
       ctx.fill();
 
-      // Clean dividing line — crisp, dark separator
-      ctx.strokeStyle = 'rgba(17, 16, 16, 0.25)';
-      ctx.lineWidth = n > 80 ? 0.5 : 1.5;
+      // Clean dividing line — crisp dark separator
+      ctx.strokeStyle = '#111419';
+      ctx.lineWidth = n > 80 ? 0.75 : 1.5;
       ctx.stroke();
 
       // Text label
@@ -495,15 +491,15 @@
         const arcAtRim = radius * sliceAngle;
         const fontSize = Math.max(10, Math.min(24, Math.floor(arcAtRim * 0.40)));
         ctx.font = `700 ${fontSize}px "Space Grotesk", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif`;
-        ctx.fillStyle = '#ffffff';
+        ctx.fillStyle = '#F8FBF6';
         ctx.textAlign = 'right';
         ctx.textBaseline = 'middle';
 
         const maxTextWidth = radius * 0.62;
         const textLabel = truncateText(ctx, state.names[i], maxTextWidth);
 
-        ctx.shadowColor = 'rgba(0, 0, 0, 0.6)';
-        ctx.shadowBlur = 4;
+        ctx.shadowColor = 'rgba(0, 0, 0, 0.9)';
+        ctx.shadowBlur = 5;
         ctx.fillText(textLabel, radius - Math.max(16, Math.floor(fontSize * 0.85)), 0);
 
         ctx.restore();
@@ -512,22 +508,28 @@
 
     ctx.restore(); // Restore wheel rotation
 
-    // Outer rim — dark, clean
+    // Outer rim — dark graphite with neon green edge
     ctx.beginPath();
     ctx.arc(centerX, centerY, radius, 0, TWO_PI);
-    ctx.strokeStyle = '#111010';
-    ctx.lineWidth = 5;
+    ctx.strokeStyle = '#363838';
+    ctx.lineWidth = 6;
     ctx.stroke();
 
-    // Subtle tick marks
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, radius - 3, 0, TWO_PI);
+    ctx.strokeStyle = 'rgba(174, 253, 147, 0.4)';
+    ctx.lineWidth = 1.2;
+    ctx.stroke();
+
+    // Subtle neon tick marks
     const studCount = Math.min(n * 2, 48);
     for (let s = 0; s < studCount; s++) {
       const angle = (s * TWO_PI) / studCount;
-      const sx = centerX + (radius - 2) * Math.cos(angle);
-      const sy = centerY + (radius - 2) * Math.sin(angle);
+      const sx = centerX + (radius - 2.5) * Math.cos(angle);
+      const sy = centerY + (radius - 2.5) * Math.sin(angle);
       ctx.beginPath();
-      ctx.arc(sx, sy, 1.5, 0, TWO_PI);
-      ctx.fillStyle = 'rgba(17, 16, 16, 0.5)';
+      ctx.arc(sx, sy, 1.8, 0, TWO_PI);
+      ctx.fillStyle = '#AEFD93';
       ctx.fill();
     }
 
@@ -537,21 +539,21 @@
   function drawEmptyWheel(ctx, cx, cy, r) {
     ctx.beginPath();
     ctx.arc(cx, cy, r, 0, TWO_PI);
-    ctx.fillStyle = 'rgba(17, 16, 16, 0.05)';
+    ctx.fillStyle = '#14181f';
     ctx.fill();
-    ctx.strokeStyle = 'rgba(17, 16, 16, 0.15)';
+    ctx.strokeStyle = '#363838';
     ctx.lineWidth = 3;
     ctx.stroke();
 
     ctx.font = '600 14px "Space Grotesk", "Inter", sans-serif';
-    ctx.fillStyle = 'rgba(17, 16, 16, 0.4)';
+    ctx.fillStyle = '#717c88';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     ctx.fillText('Añadir participantes para comenzar', cx, cy);
   }
 
   // ==========================================================================
-  // CONFETTI EFFECT (Custom Fintech Palette)
+  // CONFETTI EFFECT (Custom ZKTeco Neon Palette)
   // ==========================================================================
 
   let confettiParticles = [];
@@ -562,7 +564,7 @@
     if (isReduced) return;
 
     const count = 120;
-    const colors = ['#c8e63c', '#e8573a', '#8ec5d4', '#f0a132', '#7fa88a', '#ffffff', '#d4c5a9'];
+    const colors = ['#AEFD93', '#F8FBF6', '#363838', '#67d6ec', '#ffffff', '#8ae66e', '#4ade80'];
     confettiParticles = [];
 
     const originX = (window.innerWidth / 2) * state.dpr;
